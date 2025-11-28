@@ -1,0 +1,1060 @@
+{
+  "name": "tentativa_de_montagem_de _sensor",
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"⚠️ Risco detectado\",\n  \"nivel\": \"ALTA\",\n  \"mensagem\": \"Falha crítica no sistema de arrefecimento. Pare o veículo imediatamente!\",\n  \"acao\": \"Ativar alerta sonoro e visual no painel\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1600,
+        0
+      ],
+      "id": "4c378bee-abce-4335-b5d6-84667c38e290",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"✅ Sistema estável\",\n  \"nivel\": \"NORMAL\",\n  \"mensagem\": \"Nenhum risco detectado. Parâmetros dentro do limite.\",\n  \"acao\": \"Operação normal mantida\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1376,
+        272
+      ],
+      "id": "83c5a41f-dff1-4f6c-bf88-3d97ecd4601d",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "content": "DIAGINOSTICO DO MOTOR",
+        "height": 528,
+        "width": 1824,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -80,
+        -16
+      ],
+      "typeVersion": 1,
+      "id": "dc574289-482a-4964-99a8-05f5604f5299",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "82de4a11-7d61-42f8-ac9c-4b0999e022ab",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        176,
+        192
+      ],
+      "id": "57ae04bf-f62f-47a2-b41e-728bc45dfe8d",
+      "name": "Webhook1",
+      "webhookId": "82de4a11-7d61-42f8-ac9c-4b0999e022ab"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analise o log técnico do veículo abaixo. \nSua resposta deve ser um JSON estruturado, indicando com precisão o local exato e a natureza da falha.\n\nResponda SOMENTE no formato JSON puro (sem usar ```json ou ``` delimitadores), seguindo este modelo:\n\n{\n  \"Severidade\": \"ALTA | MÉDIA | BAIXA\",\n  \"Resumo\": \"Descrição curta do problema\",\n  \"Local_Exato\": \"Peça ou subsistema afetado (ex: bomba d'água, sensor de temperatura, válvula termostática, ventoinha, etc.)\",\n  \"Causa_Provável\": \"Breve explicação técnica do motivo do erro\",\n  \"Acao_Recomendada\": \"Instrução objetiva para o motorista e/ou mecânico\"\n}\n\nLOG DO VEÍCULO:\n {{$json[\"body\"][\"log_bruto\"]}}",
+        "options": {
+          "systemMessage": "Responda somente com um JSON puro, sem usar blocos de código, sem json ou ``` delimitadores."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        192
+      ],
+      "id": "85711623-96bf-42d8-9525-3039a4fd6e29",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        528,
+        384
+      ],
+      "id": "8ff187cf-4a08-4670-99ab-264618bd5242",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "2DuWJOjkzlCJjM7h",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "207ce516-a610-42f4-8048-e3bb1963c04f",
+              "leftValue": "={{ $json.Severidade }}",
+              "rightValue": "ALTA",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        128
+      ],
+      "id": "6e933e70-3332-46e2-92bd-c44d3ed9a87d",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "seguranca_marcha_re",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1248,
+        912
+      ],
+      "id": "182db767-5363-407f-8524-1be4b3cd0440",
+      "name": "Webhook",
+      "webhookId": "0fb423de-701d-454e-87f2-d4afd0155382"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fdf54620-b54d-405f-b70e-4275b8ce8a7c",
+              "leftValue": "={{ $json.body.Reverse }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1040,
+        912
+      ],
+      "id": "e4c87ba5-60e5-40e0-9ab1-a4bf74e6a56a",
+      "name": "marcha ré ativa?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8bf4ac20-2625-4cbe-87ac-099584ef8c36",
+              "leftValue": "={{$json[\"body\"][\"Risco\"]}}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -768,
+        768
+      ],
+      "id": "67b7ae6c-01ef-4f0d-8f6a-a926c5b029b9",
+      "name": "Risco Detectado?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a72e74cd-4832-4334-a726-193418928fa8",
+              "leftValue": "={{$json[\"body\"][\"Velocidade\"]}}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "7aa75792-f482-461b-ab82-b23afdc30862",
+              "leftValue": "={{$json[\"body\"][\"Velocidade\"]}}",
+              "rightValue": 15,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "30970d88-e318-4ed1-90a7-0caadea0289e",
+              "leftValue": "={{$json[\"body\"][\"Risco_Frontal\"]}}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "8cbdcf95-3811-48b3-822f-e69f5f47747d",
+              "leftValue": "={{$json[\"body\"][\"Risco_Frontal\"]}}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -768,
+        992
+      ],
+      "id": "78aa7abd-f564-4ce4-b48d-8441925c2df9",
+      "name": "baixa velocidade"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        832
+      ],
+      "id": "c8e7955a-b6b4-4454-ae36-a45f6e2c4ac4",
+      "name": "AÇÃO - Habilitar Câmeras (SIMULADA)"
+    },
+    {
+      "parameters": {
+        "jsCode": "// O campo 'velocidade_no_momento' será traduzido para texto antes de ser incluído no JSON de saída.\n\n// 1. Defina a variável de velocidade de entrada (supondo que o input seja um array de itens)\nconst velocidadeNumerica = $json.body.Velocidade; // Usa o valor de entrada diretamente\nlet descricaoVelocidade = \"DESCONHECIDA\";\n\n// 2. Lógica de Tradução (AJUSTE ESTES LIMITES CONFORME SUA REGRA DE SEGURANÇA)\nif (velocidadeNumerica >= 5) {\n    descricaoVelocidade = \"MUITO RÁPIDA (RISCO ALTO)\";\n} else if (velocidadeNumerica >= 3) {\n    descricaoVelocidade = \"RÁPIDA (ACIMA DA MÉDIA)\";\n} else if (velocidadeNumerica >= 1) {\n    descricaoVelocidade = \"MÉDIA\";\n} else if (velocidadeNumerica === 0) {\n    descricaoVelocidade = \"PARADA\";\n} else {\n    descricaoVelocidade = \"VALOR INVÁLIDO OU NEGATIVO\";\n}\n\n// 3. Monta o JSON de saída da Pista 2 com o campo descritivo\nreturn [\n  {\n    json: {\n      status: 'RISCOO - IMEDIAT PARADA DE EMERGÊNCIA',\n      mensagem: 'Obstáculo detectado em marcha ré. O carro seria parado imediatamente.',\n      sensor: 'Risco Traseiro',\n      // Inclui o campo 'velocidade_no_momento' com o número\n      velocidade_no_momento: velocidadeNumerica,\n      // NOVO CAMPO SOLICITADO: Combina o número com a descrição em texto\n      velocidade_descritiva: `${velocidadeNumerica}: ${descricaoVelocidade}`\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -544,
+        672
+      ],
+      "id": "b1415b0b-3119-4660-951b-52a9dd1eb54f",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        1040
+      ],
+      "id": "476acf16-6cab-4493-ab60-fc8b2efc9198",
+      "name": "No Operation, do nothing2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        1136
+      ],
+      "id": "cdd1eecd-4c4e-46fa-a269-9ec245dcaff5",
+      "name": "No Operation, do nothing3"
+    },
+    {
+      "parameters": {
+        "content": "Módulo de Segurança de Manobra\n",
+        "height": 672,
+        "width": 1120,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1280,
+        624
+      ],
+      "typeVersion": 1,
+      "id": "c820aab7-1b97-43ab-8ca3-e342afec3c91",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        1600
+      ],
+      "id": "b8b243c4-d948-465a-b7cf-352865928990",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9332c263-4dca-46e2-995f-1e226d48632c",
+              "name": "Km_Desde_Ultima_Troca_Oleo",
+              "value": "5001",
+              "type": "string"
+            },
+            {
+              "id": "9daa753d-d465-43b4-b1bf-9424f07c0731",
+              "name": "Vida_Util_Pneu_Porcentagem\t",
+              "value": "29",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1344,
+        1600
+      ],
+      "id": "d8043914-dadf-40fc-9fc5-96e5709a697e",
+      "name": "DADOS - Monitoramento Semanal"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "11423029-1f03-44c0-99b3-ca65d854f3b1",
+              "leftValue": "={{$json[\"Km_Desde_Ultima_Troca_Oleo\"]}}",
+              "rightValue": 5000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "1ac6475c-164a-4b58-b2c5-1f589574de45",
+              "leftValue": "={{ $json['Vida_Util_Pneu_Porcentagem\t'] }}",
+              "rightValue": "=30",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        144,
+        1632
+      ],
+      "id": "153d5608-2783-48ff-be7c-21ec526bccb2",
+      "name": "Precisa de Manutenção?"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Este nó simula a busca de dados de manutenção em um Schedule Trigger\n// Ele cria um objeto completo para análise preditiva.\n\n// Define o valor de KM atual e o contexto de manutenção\nconst KM_ATUAL = 5001; \nconst KM_ULTIMA_TROCA = 4500; \nconst KM_RECOMENDADO_TROCA = 10000;\nconst DIAS_DESDE_ULTIMA_TROCA = 95; // Simulação de 95 dias\n\nconst KM_RESTANTE = KM_RECOMENDADO_TROCA - KM_ATUAL;\nconst DIAS_LIMITE = 180; // 6 meses, limite de tempo para troca\n\nlet status_preditivo = \"OK\";\nlet mensagem_preditiva = \"Status de óleo dentro dos limites.\";\n\n// Lógica de Análise Preditiva Simples\nif (KM_RESTANTE <= 500) {\n    status_preditivo = \"CRÍTICO_KM\";\n    mensagem_preditiva = `Alerta de KM! Troca de óleo necessária em menos de 500km. KM atual: ${KM_ATUAL}.`;\n} else if (DIAS_DESDE_ULTIMA_TROCA >= 150) { // 150 dias = 5 meses\n    status_preditivo = \"CRÍTICO_TEMPO\";\n    mensagem_preditiva = `Alerta de Tempo! Troca de óleo necessária em breve. Já se passaram ${DIAS_DESDE_ULTIMA_TROCA} dias.`;\n} else if (KM_RESTANTE <= 2000) {\n    status_preditivo = \"MÉDIO_KM\";\n    mensagem_preditiva = `Atenção: A troca de óleo será necessária nos próximos 2.000km.`;\n}\n\n// Monta o JSON de saída com os dados CLAROS e processados\nreturn [\n  {\n    json: {\n      // DADO SOLICITADO, agora com contexto\n      km_oleo_atual: KM_ATUAL,\n      km_contexto: {\n          km_restante: KM_RESTANTE,\n          dias_desde_troca: DIAS_DESDE_ULTIMA_TROCA,\n          limite_dias: DIAS_LIMITE,\n          limite_km: KM_RECOMENDADO_TROCA\n      },\n      status_preditivo: status_preditivo,\n      mensagem_preditiva: mensagem_preditiva,\n      tipo: \"ALERTA_PREVENTIVO\" // Para ser capturado no nó de Prioridade\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        1328
+      ],
+      "id": "41018bcc-4eef-434d-92ad-ef66a7aec508",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        752,
+        1488
+      ],
+      "id": "3721c6d4-c9a8-4833-ac2b-0171c713bbb7",
+      "name": "No Operation, do nothing4"
+    },
+    {
+      "parameters": {
+        "content": "Manutenções e Visibilidade da vida util dos componentes\nHOPPSCOTCH",
+        "height": 640,
+        "width": 1536
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        64,
+        1232
+      ],
+      "typeVersion": 1,
+      "id": "919c429e-5d3a-4896-823f-808048bf140b",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2080,
+        576
+      ],
+      "id": "f632774e-f03c-4739-8bee-255bd04fe11d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "// O objetivo deste nó é analisar todas as mensagens das 3 pistas (IA, Segurança, Manutenção)\n// e emitir SOMENTE a mais crítica, puxando o Resumo e Ação de forma dinâmica.\n\nlet eventos = $input.all();\n\n// --- INÍCIO DA MUDANÇA (FUNÇÃO DE FORMATAÇÃO) ---\nfunction formatarData(dataISO) {\n    if (!dataISO) return null;\n    \n    // Cria um objeto Date\n    const data = new Date(dataISO);\n    \n    // Configura opções de formatação para o Brasil\n    const opcoes = {\n        year: 'numeric',\n        month: '2-digit',\n        day: '2-digit',\n        hour: '2-digit',\n        minute: '2-digit',\n        second: '2-digit',\n        hour12: false, // Formato 24h\n        timeZone: 'America/Sao_Paulo' // Define o fuso horário\n    };\n    \n    // Usa toLocaleString para formatar a string de forma amigável\n    return data.toLocaleString('pt-BR', opcoes).replace(',', ' às ');\n}\n// --- FIM DA MUDANÇA (FUNÇÃO DE FORMATAÇÃO) ---\n\n\n// Estrutura de saída PADRONIZADA\nlet output = {\n    Prioridade_Geral: 'ROTINA',\n    Status_Painel: 'Status Operacional OK. Monitoramento ativo.',\n    Acao_Motorista: 'Nenhuma ação necessária.',\n    Timestamp_Alerta: formatarData(new Date().toISOString()),\n    Origem_Pista: 'Nenhuma',\n    // NOVO CAMPO: Diagnóstico raiz para direcionar o mecânico (Fator Inovador)\n    Diagnostico_Raiz: 'N/A', \n    Dados_Detalhados: {}\n};\n\n// Função de busca genérica para prioridades (Case-Insensitive)\nconst findAlert = (condition) => eventos.find(e => e.json && condition(e.json));\n\n// 1. Prioridade Máxima: Eventos de Segurança (Pista 2)\nlet alerta_seguranca = findAlert(json => \n    json.status && json.status.toUpperCase().includes('PARADA DE EMERGÊNCIA')\n);\n\n// 2. Prioridade Alta: Diagnóstico Crítico da IA (Pista 1)\nlet alerta_motor_ia_alta = findAlert(json => \n    json.Severidade && json.Severidade.toUpperCase().includes('ALTA')\n);\n\n// 3. Prioridade Média: Manutenção ou Alerta IA Médio\nlet alerta_manutencao_media = findAlert(json => \n    (json.tipo && json.tipo.toUpperCase().includes('ALERTA_PREVENTIVO')) ||\n    (json.Severidade && json.Severidade.toUpperCase().includes('MÉDIA'))\n);\n\n// 4. Prioridade Baixa: Alerta IA Baixa\nlet alerta_motor_ia_baixa = findAlert(json => \n    json.Severidade && json.Severidade.toUpperCase().includes('BAIXA')\n);\n\n\n// --- Lógica de Sobrescrição de Alertas (Cascata Dinâmica) ---\n\nif (alerta_seguranca) {\n    // #1 ALERTA MÁXIMO\n    output.Prioridade_Geral = 'MÁXIMA';    \n    output.Status_Painel = alerta_seguranca.json.Resumo || alerta_seguranca.json.status || \"Alerta de segurança genérico. PARE.\";\n    output.Acao_Motorista = alerta_seguranca.json.Acao_Recomendada || \"PARE O VEÍCULO IMEDIATAMENTE!\";\n    output.Origem_Pista = 'Segurança (Pista 2)';\n    output.Diagnostico_Raiz = alerta_seguranca.json.Local_Exato || alerta_seguranca.json.Componente || alerta_seguranca.json.status; \n    output.Dados_Detalhados = alerta_seguranca.json;\n\n} else if (alerta_motor_ia_alta) {\n    // #2 ALERTA ALTA\n    \n    // --- INÍCIO DA MUDANÇA DE LIMPEZA DE DADOS (Exclusão de Severidade) ---\n    // Cria uma cópia limpa do objeto de alerta ALTA.\n    let detalhesLimpos = JSON.parse(JSON.stringify(alerta_motor_ia_alta.json));\n    \n    // EXCLUI a chave \"Severidade\" para evitar redundância (Prioridade_Geral já é 'ALTA').\n    delete detalhesLimpos.Severidade;\n    // --- FIM DA MUDANÇA DE LIMPEZA DE DADOS ---\n\n    output.Prioridade_Geral = 'ALTA';    \n    output.Status_Painel = alerta_motor_ia_alta.json.Resumo || \"Falha crítica no motor.\";\n    output.Acao_Motorista = alerta_motor_ia_alta.json.Acao_Recomendada || \"Procurar assistência técnica.\";\n    output.Origem_Pista = 'Diagnóstico IA (Pista 1)';\n    output.Diagnostico_Raiz = alerta_motor_ia_alta.json.Local_Exato || alerta_motor_ia_alta.json.Componente_Falha || 'IA detectou falha: verificar motor (Pista 1).';\n    \n    // ATRIBUI A CÓPIA LIMPA:\n    output.Dados_Detalhados = detalhesLimpos;\n\n} else if (alerta_manutencao_media) {\n    // #3 ALERTA MÉDIA\n    output.Prioridade_Geral = 'MÉDIA';    \n    output.Status_Painel = alerta_manutencao_media.json.detalhes || alerta_manutencao_media.json.Resumo || \"Manutenção preventiva em pauta.\";\n    output.Acao_Motorista = alerta_manutencao_media.json.ProximaAcao || \"Agende a manutenção na próxima oportunidade.\";\n    output.Origem_Pista = 'Preventiva/IA Média';\n    output.Diagnostico_Raiz = alerta_manutencao_media.json.Componente_Preditivo || alerta_manutencao_media.json.detalhes || 'Manutenção preventiva geral.';\n    output.Dados_Detalhados = alerta_manutencao_media.json;\n\n} else if (alerta_motor_ia_baixa) {\n    // #4 ALERTA BAIXA\n    output.Prioridade_Geral = 'BAIXA';    \n    output.Status_Painel = alerta_motor_ia_baixa.json.Resumo || \"Pequena anomalia detectada. Monitorar.\";\n    output.Acao_Motorista = alerta_motor_ia_baixa.json.Acao_Recomendada || \"Monitorar o painel nas próximas horas.\";\n    output.Origem_Pista = 'Diagnóstico IA (Baixa)';\n    output.Diagnostico_Raiz = alerta_motor_ia_baixa.json.Componente_Monitorado || alerta_motor_ia_baixa.json.Resumo || 'Anomalia leve. Monitorar.';\n    output.Dados_Detalhados = alerta_motor_ia_baixa.json;\n}\n\nreturn [ { json: output } ];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2336,
+        544
+      ],
+      "id": "4812d5da-fe21-4021-b3d2-1799e178ad06",
+      "name": "INOVAÇÃO - Prioridade de Eventos"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Garante que todos os campos saiam limpos, completos e prontos para análise\nreturn items.map(item => {\n  try {\n    // Se o campo \"output\" vier como string, tenta converter para objeto JSON\n    let data = typeof item.json.output === \"string\"\n      ? JSON.parse(item.json.output)\n      : item.json.output || {};\n\n    // Função auxiliar para limpar textos\n    const limpar = (texto) =>\n      typeof texto === \"string\"\n        ? texto.replace(/\\\\n/g, \" \").replace(/\\s+/g, \" \").trim()\n        : texto;\n\n    // Extração e limpeza dos campos principais\n    item.json.Severidade = limpar(data.Severidade || \"N/A\");\n    item.json.Resumo = limpar(data.Resumo || \"Sem resumo disponível\");\n    item.json.Local_Exato = limpar(data.Local_Exato || \"Não identificado\");\n    item.json.Causa_Provável = limpar(data.Causa_Provável || \"Desconhecida\");\n    item.json.Acao_Recomendada = limpar(data.Acao_Recomendada || \"Sem ação recomendada\");\n\n    // Criação do campo de data/hora do diagnóstico\n    const agora = new Date();\n    const dataHoraDiagnostico = agora.toLocaleString(\"pt-BR\", { timeZone: \"America/Sao_Paulo\" });\n    item.json.Data_Hora_Diagnostico = dataHoraDiagnostico;\n\n    // Cria um resumo final do diagnóstico (para exibir no painel)\n    item.json.Diagnostico_Final =\n      `📅 Diagnóstico em: ${dataHoraDiagnostico}\\n` +\n      `⚙️ Severidade: ${item.json.Severidade}\\n` +\n      `🧠 Resumo: ${item.json.Resumo}\\n` +\n      `📍 Local Exato: ${item.json.Local_Exato}\\n` +\n      `🔧 Causa Provável: ${item.json.Causa_Provável}\\n` +\n      `🚨 Ação Recomendada: ${item.json.Acao_Recomendada}`;\n\n    // Cria estrutura para o Google Sheets ou outros logs\n    item.json.Dados_Detalhados = {\n      sensor: item.json.Local_Exato || \"Desconhecido\",\n      severidade: item.json.Severidade,\n      resumo: item.json.Resumo,\n      horario: dataHoraDiagnostico\n    };\n\n    // Remove o campo original “output” (não mais necessário)\n    delete item.json.output;\n\n  } catch (e) {\n    // Caso haja falha no parse ou nos dados\n    item.json.Severidade = \"ERRO_PARSING\";\n    item.json.Resumo = \"Falha ao interpretar os dados do diagnóstico.\";\n    item.json.Local_Exato = \"Indefinido\";\n    item.json.Causa_Provável = \"Desconhecida\";\n    item.json.Acao_Recomendada = \"Verificar manualmente o sistema.\";\n    item.json.Erro_Detalhe = e.message;\n  }\n\n  return item;\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        176
+      ],
+      "id": "5c19f74e-ac05-49e2-9fe6-681fd1e20048",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Acessa todos os itens de entrada (dados do Webhook)\nconst items = $input.all();\n\n// Configura limites de segurança para seu sensor\n// *** VOCÊ DEVE ALTERAR ESTES VALORES ***\nconst MIN_TEMP = 0;   // Ex: Temperatura mínima aceitável\nconst MAX_TEMP = 120; // Ex: Temperatura máxima aceitável (Limite de segurança do motor)\n\nfor (const item of items) {\n  let temp = item.json.body.temperatura; // Adapte 'body.temperatura' conforme a estrutura real do seu Webhook\n  \n  // 1. Defina um status inicial de OK\n  let status_validacao = \"OK\";\n  let temperatura_validada = temp;\n\n  // 2. Validação de Formato e Existência\n  if (typeof temp !== 'number' || isNaN(temp)) {\n    status_validacao = \"ERRO: Não é número ou está faltando.\";\n    temperatura_validada = 999; // Valor para indicar erro crítico/anomalia\n  } \n  // 3. Validação de Intervalo Razoável\n  else if (temp < MIN_TEMP || temp > MAX_TEMP) {\n    status_validacao = `ALERTA: Fora do intervalo normal (${MIN_TEMP}-${MAX_TEMP}).`;\n    // Deixa o valor bruto passar, mas marca como ALERTA\n    temperatura_validada = temp;\n  }\n  \n  // 4. Cria novos campos de saída para o próximo nó (AI Agent)\n  item.json.dados_limpos = {\n    temperatura: temperatura_validada,\n    status_validacao: status_validacao\n    // Adicione outros campos limpos aqui (pressao, vibração, etc.)\n  };\n}\n\nreturn items; // Retorna os dados processados para o próximo nó"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        192
+      ],
+      "id": "d42f7aec-6ad7-40ae-8ecd-5b0c05ecc66d",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8898ab2e-89d5-4f95-b513-555a9e11c5a3",
+              "leftValue": "={{$json.Prioridade_Geral}}",
+              "rightValue": "\"MÁXIMA (RISCO IMEDIATO)\"",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2544,
+        544
+      ],
+      "id": "81749719-6dc1-48ca-a118-5158a9a15902",
+      "name": "AÇÃO AUTÔNOMA"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Este código simula a prova de que o comando de segurança offline foi emitido.\n// Ele é totalmente offline e não usa Write File (que era instável).\n\n// Ação de Kill Switch (simulação do comando local)\nconst comandoLocal = \"CMD_KILL_SWITCH_ATIVADO\";\n\n// Gera um timestamp para provar o momento da ação (prova de não-repúdio)\nconst timestamp = new Date().toISOString();\n\n// Simula um \"código de segurança\" combinando o comando e o tempo\n// Isso representa o hash único que seria salvo no hardware local.\nconst logHashSimulado = `${comandoLocal}_${timestamp}_${Math.random().toString(36).substring(2, 9)}`;\n\n// O nó retorna a prova da execução (simulando que ela foi salva localmente)\nreturn [\n    {\n        json: {\n            status: \"LOG_SEGURANCA_GERADO\",\n            comando_executado: comandoLocal,\n            timestamp_execucao: timestamp,\n            prova_offline: logHashSimulado \n        }\n    }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2768,
+        416
+      ],
+      "id": "9f8e2ea0-35ea-438f-8abd-88d7ba67ce37",
+      "name": "MITIGAÇÃO - LOG HASH (OFFLINE)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2ecbfbca-df0a-4b22-8163-7c49af9b7071",
+              "leftValue": "={{$json.Prioridade_Geral}}",
+              "rightValue": "\"ALTA (FALHA CRÍTICA)\"",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2784,
+        704
+      ],
+      "id": "801f4b87-acc5-4eec-9dec-b534d8f3bbf9",
+      "name": "FILTRO - PRIORIDADE ALTA OFFLINE"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- SIMULAÇÃO DE ARMAZENAMENTO LOCAL OFFLINE PARA ALERTA ALTA ---\n\n// Acessa os dados do alerta (como a prioridade e o resumo)\nconst alerta = $input.item[0].json;\n\n// Define a ação de notificação local para o motorista/software\nconst acaoLocal = \"NOTIFICACAO_PAINEL_OFFLINE\";\n\n// Gera um timestamp e um código único (simulando um registro de log criptografado)\nconst timestamp = new Date().toISOString();\nconst hashDoAlerta = `${alerta.Prioridade_Geral}_${timestamp}_${Math.random().toString(36).substring(2, 8)}`;\n\n// O nó retorna a prova de que o registro local foi salvo\nreturn [\n    {\n        json: {\n            status: \"REGISTRO_LOCAL_SALVO\",\n            prioridade_salva: alerta.Prioridade_Geral,\n            resumo_evento: alerta.Resumo_Unificado,\n            hash_prova_local: hashDoAlerta,\n            timestamp_execucao: timestamp\n        }\n    }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2992,
+        608
+      ],
+      "id": "72df8cd0-2108-48ed-9dcd-a95886f7a60c",
+      "name": "BACKUP - LOG ALTA OFFLINE"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1TrrBo8sOGaVwriAN1qdI-s7qmQHL6DeqAG3AGW6NYm4",
+          "mode": "list",
+          "cachedResultName": "AÇÃO AUTONOMA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TrrBo8sOGaVwriAN1qdI-s7qmQHL6DeqAG3AGW6NYm4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TrrBo8sOGaVwriAN1qdI-s7qmQHL6DeqAG3AGW6NYm4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Data_Hora": "={{ $json.Timestamp_Alerta }}",
+            "Prioridade_Final": "={{ $json.Prioridade_Geral }}",
+            "Resumo_Unificado": "={{ $json.Status_Painel }}",
+            "Status_Acao_Humana": "={{ $json.Acao_Motorista }}",
+            "Pista_Origem": "={{ $json.Origem_Pista }}",
+            "Sensor_Em_Risco": "={{ $json.Dados_Detalhados.Dados_Detalhados }}",
+            "Diagnostico_Final": "={{ $json.Dados_Detalhados.Diagnostico_Final }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Data_Hora",
+              "displayName": "Data_Hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Prioridade_Final",
+              "displayName": "Prioridade_Final",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Resumo_Unificado",
+              "displayName": "Resumo_Unificado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status_Acao_Humana",
+              "displayName": "Status_Acao_Humana",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Pista_Origem",
+              "displayName": "Pista_Origem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Diagnostico_Final",
+              "displayName": "Diagnostico_Final",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sensor_Em_Risco",
+              "displayName": "Sensor_Em_Risco",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2992,
+        800
+      ],
+      "id": "231dbb5e-3201-4c13-a646-6ad7b639ab09",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "B7V1BuICQY1QW4MS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const agora = new Date();\n\n  // Data e hora formatadas em padrão brasileiro\n  const dataFormatada = agora.toLocaleDateString(\"pt-BR\");\n  const horaFormatada = agora.toLocaleTimeString(\"pt-BR\");\n\n  // Monta um resumo completo com data/hora\n  item.json.Diagnostico_Final = `\n📅 Data: ${dataFormatada}\n⏰ Horário: ${horaFormatada}\n\n🚨 Diagnóstico de Falha:\n- Severidade: ${item.json.Severidade || \"N/A\"}\n- Local Exato: ${item.json.Local_Exato || \"Desconhecido\"}\n- Causa Provável: ${item.json.Causa_Provável || \"Não identificada\"}\n- Ação Recomendada: ${item.json.Acao_Recomendada || \"Sem ação sugerida\"}\n\n🧠 Resumo:\n${item.json.Resumo || \"Sem resumo disponível.\"}\n  `.trim();\n\n  return item;\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3200,
+        800
+      ],
+      "id": "8bd4b741-4d58-4b87-8219-0633648709b8",
+      "name": "Code in JavaScript4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook1": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "marcha ré ativa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "marcha ré ativa?": {
+      "main": [
+        [
+          {
+            "node": "Risco Detectado?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "baixa velocidade",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Risco Detectado?": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AÇÃO - Habilitar Câmeras (SIMULADA)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "baixa velocidade": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "DADOS - Monitoramento Semanal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DADOS - Monitoramento Semanal": {
+      "main": [
+        [
+          {
+            "node": "Precisa de Manutenção?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Precisa de Manutenção?": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "INOVAÇÃO - Prioridade de Eventos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing4": {
+      "main": [
+        []
+      ]
+    },
+    "INOVAÇÃO - Prioridade de Eventos": {
+      "main": [
+        [
+          {
+            "node": "AÇÃO AUTÔNOMA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AÇÃO AUTÔNOMA": {
+      "main": [
+        [
+          {
+            "node": "MITIGAÇÃO - LOG HASH (OFFLINE)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "FILTRO - PRIORIDADE ALTA OFFLINE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FILTRO - PRIORIDADE ALTA OFFLINE": {
+      "main": [
+        [
+          {
+            "node": "BACKUP - LOG ALTA OFFLINE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7fdee587-c3a0-4f48-a3ad-650f0985a4ba",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "18a5989f779792507c2f91e99aad4841c3fbc0f9a4facb1908255c835b28186a"
+  },
+  "id": "YULGx1C1azrCamjF",
+  "tags": []
+}
