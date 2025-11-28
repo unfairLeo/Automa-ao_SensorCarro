@@ -1,0 +1,21 @@
+HOPPSCOTCH
+
+WEBHOOK1
+METODO A SER UTILIZADO = POST (link)
+
+Corpo - apliccattion/json
+{
+  "id_veiculo": "ABC-1234",
+  "log_bruto": "Falha crítica no sistema de arrefecimento detectada, temperatura acima do limite.",
+  "sensor_id": 987,
+  "severidade_esperada": "ALTA"
+}
+
+---------------------------------------------------------------------------------------------------
+WEBHOOK2
+
+METODO A SER UTILIZADO = POST (link)
+
+Corpo - apliccattion/json
+
+{"Reverse": true, "Risco": true, "Velocidade": 3, "Risco_Frontal": false}
