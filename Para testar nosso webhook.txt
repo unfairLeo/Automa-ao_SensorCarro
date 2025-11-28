@@ -1,7 +1,8 @@
-HOPPSCOTCH
+HOPPSCOTCH(Site usado para testar a simulação do sensor)
+OBSERVAÇÃO: o corpo abaixo em json é uma situação hipotetica que o sensor vai reconhecer de problema.
 
 WEBHOOK1
-METODO A SER UTILIZADO = POST (link)
+METODO A SER UTILIZADO = POST (insira o link do webhook)
 
 Corpo - apliccattion/json
 {
@@ -14,8 +15,9 @@ Corpo - apliccattion/json
 ---------------------------------------------------------------------------------------------------
 WEBHOOK2
 
-METODO A SER UTILIZADO = POST (link)
+METODO A SER UTILIZADO = POST (Insira o link do webhook)
 
 Corpo - apliccattion/json
+
 
 {"Reverse": true, "Risco": true, "Velocidade": 3, "Risco_Frontal": false}
